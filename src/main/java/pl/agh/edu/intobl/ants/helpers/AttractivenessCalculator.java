@@ -44,7 +44,7 @@ public class AttractivenessCalculator {
     }
 
     private double[] dominance(int actualCity, boolean[] visited, int[][] firstCriterium, int[][] secondCriterium) {
-        ParetoSet<Integer> paretoSet = new ParetoSetImpl();
+        ParetoSet<ParetoElement<Integer>> paretoSet = new ParetoSetImpl();
         for (int i = 0; i < firstCriterium[actualCity].length; i++) {
             if (!visited[i]) {
                 final IntegerElement element = new IntegerElement(firstCriterium[actualCity][i], secondCriterium[actualCity][i], i);

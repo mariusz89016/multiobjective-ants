@@ -3,7 +3,7 @@ package pl.agh.edu.intobl.ants.helpers;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ParetoSetImpl implements ParetoSet<Integer> {
+public class ParetoSetImpl implements ParetoSet<ParetoElement<Integer>> {
     private Set<ParetoElement<Integer>> set = new HashSet<>();
 
     @Override

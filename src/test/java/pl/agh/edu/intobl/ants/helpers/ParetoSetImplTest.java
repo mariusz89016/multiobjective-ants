@@ -11,7 +11,7 @@ public class ParetoSetImplTest {
     @Test
     public void shouldContainsAllAddedElements() throws Exception {
         //given
-        ParetoSet<Integer> set = new ParetoSetImpl();
+        ParetoSet<ParetoElement<Integer>> set = new ParetoSetImpl();
         final IntegerElement first = new IntegerElement(1, 2, 0);
         final IntegerElement second = new IntegerElement(2, 1, 0);
 
@@ -32,7 +32,7 @@ public class ParetoSetImplTest {
     @Test
     public void addingDominatedElement() throws Exception {
         //given
-        ParetoSet<Integer> set = new ParetoSetImpl();
+        ParetoSet<ParetoElement<Integer>> set = new ParetoSetImpl();
         final IntegerElement first = new IntegerElement(1, 2, 0);
         final IntegerElement second = new IntegerElement(2, 3, 0);
 
@@ -52,7 +52,7 @@ public class ParetoSetImplTest {
     @Test
     public void addingDominatingElement() throws Exception {
         //given
-        ParetoSet<Integer> set = new ParetoSetImpl();
+        ParetoSet<ParetoElement<Integer>> set = new ParetoSetImpl();
         final IntegerElement first = new IntegerElement(1, 2, 0);
         final IntegerElement second = new IntegerElement(3, 2, 0);
         final IntegerElement third = new IntegerElement(2, 3, 0);
