@@ -1,30 +1,25 @@
-package pl.agh.edu.intobl.ants.helpers;
+package pl.agh.edu.intobl.ants.c_singlePheromone;
 
+import pl.agh.edu.intobl.ants.helpers.*;
 import pl.agh.edu.intobl.ants.loaders.BiobjectiveTSPLoader;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 
-public class AntsAttractivenessRunner {
+public class SinglePheromoneRunner {
     public static void main(String[] args) throws IOException {
         String distanceFile = "/tspInstances/kroA100.tsp";
         String costFile = "/tspInstances/kroB100.tsp";
         BiobjectiveTSPLoader tspLoader = new BiobjectiveTSPLoader(distanceFile, costFile);
 
-        double dominanceFactor = 0.33;
-        double historyFactor = 0.33;
-        double pheromoneFactor = 0.34;
-
         double alpha = 0.1;
         double beta = 0.5;
         double rho = 0.5;
         double q0 = 0.9;
-        int numAnts = 25;
-        int maxTime = 400;
+        int numAnts = 10;
+        int maxTime = 160;
         int numCities = tspLoader.getNumberOfCities();
 
-        AntsColony3 antsColony = new AntsColony3(alpha, beta, numAnts, numCities, rho, q0, 0.0, dominanceFactor, historyFactor, pheromoneFactor);
+        AntsColony3 antsColony = new AntsColony3(alpha, beta, numAnts, numCities, rho, q0, 0.0, 0.0, 0.0, 1.0);
         ParetoSet<Path> front = new ParetoSetPathImpl();
 
         final double[][] pheromones = antsColony.initializePheromones(numCities);
@@ -46,17 +41,8 @@ public class AntsAttractivenessRunner {
             }
         }
 
-
-        final String filename = "attractiveness_" + maxTime + "_" + dominanceFactor + "_" + historyFactor + "_" + pheromoneFactor + ".out";
-        FileWriter fileWriter = new FileWriter(filename);
-        fileWriter.write(maxTime + "\n");
-        fileWriter.write(dominanceFactor + "\n");
-        fileWriter.write(historyFactor + "\n");
-        fileWriter.write(pheromoneFactor + "\n");
-
         for (Path path : front.getNonDominatedSet()) {
-            fileWriter.write(path.getFirstCriterium() + "\t" + path.getSecondCriterium() + "\n");
+            System.out.println(path.getFirstCriterium() + "\t" + path.getSecondCriterium());
         }
-        fileWriter.close();
     }
 }

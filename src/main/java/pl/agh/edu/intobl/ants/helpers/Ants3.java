@@ -12,6 +12,9 @@ public class Ants3 {
     private final double beta;
     private final double weight1;
     private final double weight2;
+    private final double pheromoneFactor;
+    private final double historyFactor;
+    private final double dominanceFactor;
     private List<Path> historicalPaths = new ArrayList<>();
 
     public ParetoSet<Path> getFrontPareto() {
@@ -22,8 +25,10 @@ public class Ants3 {
     private int[] actualPath;
 
 
-    //todo dominanceFactor, historyFactor, pheromoneFactor
-    public Ants3(double alpha, double beta, double weight1, double weight2) {
+    public Ants3(double dominanceFactor, double historyFactor, double pheromoneFactor, double alpha, double beta, double weight1, double weight2) {
+        this.dominanceFactor = dominanceFactor;
+        this.historyFactor = historyFactor;
+        this.pheromoneFactor = pheromoneFactor;
         this.alpha = alpha;
         this.beta = beta;
         this.weight1 = weight1;
@@ -69,7 +74,7 @@ public class Ants3 {
     }
 
     private double[] moveProbabilities(int cityX, boolean[] visited, double[][] pheromones, int[][] distances, int[][] distances2) {
-        return new AttractivenessCalculator(0.0, 0.0, 1.0, weight1, weight2)
+        return new AttractivenessCalculator(dominanceFactor, historyFactor, pheromoneFactor, weight1, weight2)
                 .movesProbability(cityX, visited, pheromones, distances, distances2, historicalPaths, alpha, beta);
     }
 

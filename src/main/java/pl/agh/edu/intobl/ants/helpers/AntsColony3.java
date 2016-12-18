@@ -14,14 +14,17 @@ public class AntsColony3 {
     private final double q0;
     private final double tau0;
 
-    public AntsColony3(double alpha, double beta, int numAnts, int numCities, double rho, double q0, double tau0) {
+    public AntsColony3(double alpha, double beta, int numAnts, int numCities, double rho, double q0, double tau0, double dominanceFactor, double historyFactor, double pheromoneFactor) {
         this.numCities = numCities;
         this.rho = rho;
         this.q0 = q0;
         this.tau0 = tau0;
         random = new Random();
+        double step = 1.0 / numAnts;
+        double current = 0.0;
         for (int i = 0; i < numAnts; i++) {
-            Ants3 ant = new Ants3(alpha, beta, 0.5, 0.5); //todo change weights!
+            Ants3 ant = new Ants3(dominanceFactor, historyFactor, pheromoneFactor, alpha, beta, current, 1.0 - current);
+            current += step;
             ant.setPath(randomRoute(random.nextInt(numCities), numCities));
             ants.add(ant);
         }
