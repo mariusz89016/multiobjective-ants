@@ -5,6 +5,7 @@ import pl.agh.edu.intobl.ants.loaders.BiobjectiveTSPLoader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.Duration;
 
 public class AntsAttractivenessRunner {
     public static void main(String[] args) throws IOException {
@@ -17,20 +18,22 @@ public class AntsAttractivenessRunner {
         double pheromoneFactor = 0.34;
 
         double alpha = 0.1;
-        double beta = 0.5;
-        double rho = 0.5;
-        double q0 = 0.9;
-        int numAnts = 25;
-        int maxTime = 400;
+        double beta = 2;
+        double rho = 1;
+        double q0 = 1;
+        int numAnts = 40;
+        int maxTime = 500;
         int numCities = tspLoader.getNumberOfCities();
 
-        AntsColony3 antsColony = new AntsColony3(alpha, beta, numAnts, numCities, rho, q0, 0.0, dominanceFactor, historyFactor, pheromoneFactor);
+        AntsColony3 antsColony = new AntsColony3(alpha, beta, numAnts, numCities, rho, q0, 0.0001, dominanceFactor, historyFactor, pheromoneFactor);
         ParetoSet<Path> front = new ParetoSetPathImpl();
 
         final double[][] pheromones = antsColony.initializePheromones(numCities);
         final int[][] distances = tspLoader.getFirstCriterium();
         final int[][] costs = tspLoader.getSecondCriterium();
 
+
+        long startTime = System.currentTimeMillis();
         int time = 0;
         while (time < maxTime) {
             antsColony.updateAnts(pheromones, distances, costs);
@@ -45,9 +48,17 @@ public class AntsAttractivenessRunner {
                 System.out.println(time + " -> size: " + front.getNonDominatedSet().size());
             }
         }
+        final long durationInMillis = System.currentTimeMillis() - startTime;
+        final Duration duration = Duration.ofMillis(durationInMillis);
+        System.out.println(duration + "(" + duration.getSeconds() + ")");
 
 
-        final String filename = "attractiveness_" + maxTime + "_" + dominanceFactor + "_" + historyFactor + "_" + pheromoneFactor + ".out";
+        final String filename = "attractiveness_" +
+                numAnts + "_" +
+                maxTime + "_" +
+                dominanceFactor + "_" +
+                historyFactor + "_" +
+                pheromoneFactor + ".out";
         FileWriter fileWriter = new FileWriter(filename);
         fileWriter.write(maxTime + "\n");
         fileWriter.write(dominanceFactor + "\n");
@@ -60,3 +71,10 @@ public class AntsAttractivenessRunner {
         fileWriter.close();
     }
 }
+//ustalic ilosc mrowek
+//20 wywolan (po 10):
+
+//dominanceFactor:
+//historyFactor:
+//pheromoneFactor:
+

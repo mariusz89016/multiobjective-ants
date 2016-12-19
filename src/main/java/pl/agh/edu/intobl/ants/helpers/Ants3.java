@@ -1,9 +1,8 @@
 package pl.agh.edu.intobl.ants.helpers;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import com.google.common.collect.EvictingQueue;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -15,7 +14,8 @@ public class Ants3 {
     private final double pheromoneFactor;
     private final double historyFactor;
     private final double dominanceFactor;
-    private List<Path> historicalPaths = new ArrayList<>();
+    private Queue<Path> historicalPathQueue = EvictingQueue.create(100);
+//    private List<Path> historicalPaths = new ArrayList<>();
 
     public ParetoSet<Path> getFrontPareto() {
         return frontPareto;
@@ -54,7 +54,8 @@ public class Ants3 {
         }
 
         final Path path = new Path(route, distances, distances2);
-        historicalPaths.add(path);
+        historicalPathQueue.add(path);
+//        historicalPaths.add(path);
         frontPareto.addParetoElementToSet(path);
 
         return route;
@@ -74,8 +75,10 @@ public class Ants3 {
     }
 
     private double[] moveProbabilities(int cityX, boolean[] visited, double[][] pheromones, int[][] distances, int[][] distances2) {
+//        return new AttractivenessCalculator(dominanceFactor, historyFactor, pheromoneFactor, weight1, weight2)
+//                .movesProbability(cityX, visited, pheromones, distances, distances2, historicalPaths, alpha, beta);
         return new AttractivenessCalculator(dominanceFactor, historyFactor, pheromoneFactor, weight1, weight2)
-                .movesProbability(cityX, visited, pheromones, distances, distances2, historicalPaths, alpha, beta);
+                .movesProbability(cityX, visited, pheromones, distances, distances2, new ArrayList<>(historicalPathQueue), alpha, beta);
     }
 
     private double[] calculateCumulative(double[] probabilities) {

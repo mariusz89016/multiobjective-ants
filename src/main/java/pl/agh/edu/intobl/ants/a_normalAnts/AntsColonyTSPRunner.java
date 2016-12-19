@@ -15,7 +15,7 @@ public class AntsColonyTSPRunner {
         double beta = 2;
         double rho = 0.3;
         double q0 = 1;
-        int numAnts = 10;
+        int numAnts = 30;
         int maxTime = 100000;
 
         AntsColony antsColony = new AntsColony(alpha, beta, rho, q0, 0.0001, numAnts);
