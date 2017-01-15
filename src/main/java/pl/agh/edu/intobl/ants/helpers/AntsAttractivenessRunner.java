@@ -13,16 +13,19 @@ public class AntsAttractivenessRunner {
         String costFile = "/tspInstances/kroB100.tsp";
         BiobjectiveTSPLoader tspLoader = new BiobjectiveTSPLoader(distanceFile, costFile);
 
-        double dominanceFactor = 0.33;
-        double historyFactor = 0.33;
-        double pheromoneFactor = 0.34;
+
+        //todo: optymalizacja: jesli ==0 to nie liczyc!!
+        //todo: wyslac z pheromoneFactor==1.0
+        double dominanceFactor = 0.65;
+        double historyFactor = 0.35;
+        double pheromoneFactor = 0.0;
 
         double alpha = 0.1;
         double beta = 2;
         double rho = 1;
         double q0 = 1;
-        int numAnts = 40;
-        int maxTime = 500;
+        int numAnts = 60;
+        int maxTime = 1500;
         int numCities = tspLoader.getNumberOfCities();
 
         AntsColony3 antsColony = new AntsColony3(alpha, beta, numAnts, numCities, rho, q0, 0.0001, dominanceFactor, historyFactor, pheromoneFactor);

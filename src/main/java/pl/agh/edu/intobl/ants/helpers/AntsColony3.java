@@ -81,6 +81,7 @@ public class AntsColony3 {
                         increase = q0 /(ants.get(k).getWeight1() *length + ants.get(k).getWeight2()*length2);
                     }
                 }
+                //todo split pheromonoes
                 pheromones[i][j] = decrease+increase;
                 pheromones[i][j] = Math.max(pheromones[i][j], 0.0001);
                 pheromones[i][j] = Math.min(pheromones[i][j], 100000.0);
