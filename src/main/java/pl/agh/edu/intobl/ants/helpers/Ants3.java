@@ -35,8 +35,8 @@ public class Ants3 {
     }
 
 
-    public int[] buildRoute(int start, double[][] pheromones, int[][] distances, int[][] distances2) {
-        int numCities = pheromones.length;
+    public int[] buildRoute(int start, double[][] pheromones1, double[][] pheromones2, int[][] distances, int[][] distances2) {
+        int numCities = pheromones1.length;
         int[] route = new int[numCities];
         boolean[] visited = new boolean[numCities];
 
@@ -44,7 +44,7 @@ public class Ants3 {
         visited[start]=true;
         for (int j = 0; j < numCities - 1; j++) {
             int cityX = route[j];
-            route[j+1] = nextCity(cityX, visited, pheromones, distances, distances2);
+            route[j+1] = nextCity(cityX, visited, pheromones1, pheromones2, distances, distances2);
             visited[route[j+1]] = true;
         }
 
@@ -54,8 +54,8 @@ public class Ants3 {
         return route;
     }
 
-    private int nextCity(int cityX, boolean[] visited, double[][] pheromones, int[][] distances, int[][] distances2) {
-        double[] probabilities = moveProbabilities(cityX, visited, pheromones, distances, distances2);
+    private int nextCity(int cityX, boolean[] visited, double[][] pheromones1, double[][] pheromones2, int[][] distances, int[][] distances2) {
+        double[] probabilities = moveProbabilities(cityX, visited, pheromones1, pheromones2, distances, distances2);
         double[] cumulative = calculateCumulative(probabilities);
 
         final double randomDouble = new Random().nextDouble();
@@ -64,14 +64,14 @@ public class Ants3 {
                 return j;
             }
         }
-        return pheromones.length-1;
+        return pheromones1.length-1;
     }
 
-    private double[] moveProbabilities(int cityX, boolean[] visited, double[][] pheromones, int[][] distances, int[][] distances2) {
+    private double[] moveProbabilities(int cityX, boolean[] visited, double[][] pheromones1, double[][] pheromones2, int[][] distances, int[][] distances2) {
 //        return new AttractivenessCalculator(dominanceFactor, historyFactor, pheromoneFactor, weight1, weight2)
 //                .movesProbability(cityX, visited, pheromones, distances, distances2, historicalPaths, alpha, beta);
         return new AttractivenessCalculator(dominanceFactor, historyFactor, pheromoneFactor, weight1, weight2)
-                .movesProbability(cityX, visited, pheromones, distances, distances2, new ArrayList<>(frontPareto.getNonDominatedSet()), alpha, beta);
+                .movesProbability(cityX, visited, pheromones1, pheromones2, distances, distances2, new ArrayList<>(frontPareto.getNonDominatedSet()), alpha, beta);
     }
 
     private double[] calculateCumulative(double[] probabilities) {

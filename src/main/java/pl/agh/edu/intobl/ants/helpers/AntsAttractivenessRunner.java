@@ -14,10 +14,8 @@ public class AntsAttractivenessRunner {
         BiobjectiveTSPLoader tspLoader = new BiobjectiveTSPLoader(distanceFile, costFile);
 
 
-        //todo: optymalizacja: jesli ==0 to nie liczyc!!
-        //todo: wyslac z pheromoneFactor==1.0
-        double dominanceFactor = 0.65;
-        double historyFactor = 0.35;
+        double dominanceFactor = 1.0;
+        double historyFactor = 0.0;
         double pheromoneFactor = 0.0;
 
         double alpha = 0.1;
@@ -31,7 +29,8 @@ public class AntsAttractivenessRunner {
         AntsColony3 antsColony = new AntsColony3(alpha, beta, numAnts, numCities, rho, q0, 0.0001, dominanceFactor, historyFactor, pheromoneFactor);
         ParetoSet<Path> front = new ParetoSetPathImpl();
 
-        final double[][] pheromones = antsColony.initializePheromones(numCities);
+        final double[][] pheromonesDistances = antsColony.initializePheromones(numCities);
+        final double[][] pheromonesCosts = antsColony.initializePheromones(numCities);
         final int[][] distances = tspLoader.getFirstCriterium();
         final int[][] costs = tspLoader.getSecondCriterium();
 
@@ -39,8 +38,8 @@ public class AntsAttractivenessRunner {
         long startTime = System.currentTimeMillis();
         int time = 0;
         while (time < maxTime) {
-            antsColony.updateAnts(pheromones, distances, costs);
-            antsColony.updatePheromones(pheromones, distances, costs);
+            antsColony.updateAnts(pheromonesDistances, pheromonesCosts, distances, costs);
+            antsColony.updatePheromones(pheromonesDistances, pheromonesCosts, distances, costs);
             for (Ants3 ants3 : antsColony.getAnts()) {
                 for(Path p : ants3.getFrontPareto().getNonDominatedSet()) {
                     front.addParetoElementToSet(p);

@@ -47,12 +47,12 @@ public class AntsColony3 {
         return pheromones;
     }
 
-    public void updateAnts(double[][] pheromones, int[][] distances, int[][] distances2) {
-        int numCities = pheromones.length;
+    public void updateAnts(double[][] pheromones1, double[][] pheromones2, int[][] distances, int[][] distances2) {
+        int numCities = pheromones1.length;
         for (int i = 0; i < ants.size(); i++) {
             final int start = random.nextInt(numCities);
             Ants3 currentAnt = ants.get(i);
-            currentAnt.setPath(currentAnt.buildRoute(start, pheromones, distances, distances2));
+            currentAnt.setPath(currentAnt.buildRoute(start, pheromones1, pheromones2, distances, distances2));
         }
     }
 
@@ -67,25 +67,34 @@ public class AntsColony3 {
         return cities.stream().mapToInt(i->i).toArray();
     }
 
-    public void updatePheromones(double[][] pheromones, int[][] distances, int[][] distances2) {
-        for (int i = 0; i < pheromones.length; i++) {
-            for (int j = i+1; j < pheromones[i].length; j++) {
-                double decrease = 0;
-                double increase = 0;
+    public void updatePheromones(double[][] pheromones1, double[][] pheromones2, int[][] distances, int[][] distances2) {
+        for (int i = 0; i < pheromones1.length; i++) {
+            for (int j = i+1; j < pheromones1[i].length; j++) {
+                double decrease1 = 0;
+                double decrease2 = 0;
+                double increase1 = 0;
+                double increase2 = 0;
                 for (int k = 0; k < ants.size(); k++) {
-                    double length = length(ants.get(k).getPath(), distances); // TODO: 12/12/16 check - added!
+                    double length1 = length(ants.get(k).getPath(), distances); // TODO: 12/12/16 check - added!
                     double length2 = length(ants.get(k).getPath(), distances2);
-                    decrease = (1.0 - rho)*pheromones[i][j];
-                    increase = 0.0;
+                    decrease1 = (1.0 - rho)*pheromones1[i][j];
+                    decrease2 = (1.0 - rho)*pheromones2[i][j];
+                    increase1 = 0.0;
+                    increase2 = 0.0;
                     if(edgeInRoute(i, j, ants.get(k).getPath())) {
-                        increase = q0 /(ants.get(k).getWeight1() *length + ants.get(k).getWeight2()*length2);
+                        increase1 = q0 / length1;
+                        increase2 = q0 / length2;
                     }
                 }
-                //todo split pheromonoes
-                pheromones[i][j] = decrease+increase;
-                pheromones[i][j] = Math.max(pheromones[i][j], 0.0001);
-                pheromones[i][j] = Math.min(pheromones[i][j], 100000.0);
-                pheromones[j][i] = pheromones[i][j];
+                pheromones1[i][j] = decrease1+increase1;
+                pheromones1[i][j] = Math.max(pheromones1[i][j], 0.0001);
+                pheromones1[i][j] = Math.min(pheromones1[i][j], 100000.0);
+                pheromones1[j][i] = pheromones1[i][j];
+
+                pheromones2[i][j] = decrease2 + increase2;
+                pheromones2[i][j] = Math.max(pheromones2[i][j], 0.0001);
+                pheromones2[i][j] = Math.min(pheromones2[i][j], 100000.0);
+                pheromones2[j][i] = pheromones2[i][j];
             }
         }
     }

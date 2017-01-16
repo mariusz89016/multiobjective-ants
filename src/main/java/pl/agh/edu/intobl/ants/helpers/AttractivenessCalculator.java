@@ -19,11 +19,20 @@ public class AttractivenessCalculator {
         this.secondCriteriumWeight = secondCriteriumWeight;
     }
 
-    public double[] movesProbability(int actualCity, boolean[] visited, double[][] initialPheromones, int[][] firstCriterium, int[][] secondCriterium, List<Path> historicalPaths, double alpha, double beta) {
+    public double[] movesProbability(int actualCity, boolean[] visited, double[][] pheromones1, double[][] pheromones2, int[][] firstCriterium, int[][] secondCriterium, List<Path> historicalPaths, double alpha, double beta) {
         double[] probability = new double[visited.length];
-        double[] dominance = dominance(actualCity, visited, firstCriterium, secondCriterium);
-        double[] history = history(actualCity, visited, historicalPaths);
-        double[] pheromones = pheromones(actualCity, visited, initialPheromones, alpha, beta, firstCriterium, secondCriterium);
+        double[] dominance = new double[visited.length];
+        if(dominanceFactor != 0.0) {
+            dominance = dominance(actualCity, visited, firstCriterium, secondCriterium);
+        }
+        double[] history = new double[visited.length];
+        if(historyFactor != 0.0) {
+            history = history(actualCity, visited, historicalPaths);
+        }
+        double[] pheromones = new double[visited.length];
+        if(pheromoneFactor != 0.0) {
+            pheromones = pheromones(actualCity, visited, pheromones1, pheromones2, alpha, beta, firstCriterium, secondCriterium);
+        }
 
         for (int i = 0; i < probability.length; i++) {
             probability[i] = dominanceFactor * dominance[i] + historyFactor * history[i] + pheromoneFactor * pheromones[i];
@@ -91,8 +100,8 @@ public class AttractivenessCalculator {
         return probabilities;
     }
 
-    private double[] pheromones(int actualCity, boolean[] visited, double[][] initialPheromones, double alpha, double beta, int[][] firstCriterium, int[][] secondCriterium) {
-        int numCities = initialPheromones.length;
+    private double[] pheromones(int actualCity, boolean[] visited, double[][] pheromones1, double[][] pheromones2, double alpha, double beta, int[][] firstCriterium, int[][] secondCriterium) {
+        int numCities = pheromones1.length;
         double[] taueta = new double[numCities];
         double sum = 0;
 
@@ -100,8 +109,8 @@ public class AttractivenessCalculator {
             if(j==actualCity || visited[j]) {
                 taueta[j] = 0;
             } else {
-                taueta[j] = Math.pow(initialPheromones[actualCity][j], alpha) *
-                        Math.pow(1.0/(firstCriteriumWeight*firstCriterium[actualCity][j] + secondCriteriumWeight*secondCriterium[actualCity][j]), beta);
+                taueta[j] = firstCriteriumWeight * (Math.pow(pheromones1[actualCity][j], alpha) * Math.pow(1.0/(firstCriterium[actualCity][j]), beta))
+                        + secondCriteriumWeight * Math.pow(pheromones2[actualCity][j], alpha) * Math.pow(1.0/(secondCriterium[actualCity][j]), beta);
                 taueta[j] = Math.max(taueta[j], 0.0001);
                 taueta[j] = Math.min(taueta[j], Double.MAX_VALUE/(numCities*100));
             }
