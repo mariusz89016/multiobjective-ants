@@ -5,6 +5,8 @@ import pl.agh.edu.intobl.ants.loaders.BiobjectiveTSPLoader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Duration;
 
 public class AntsAttractivenessRunner {
@@ -55,7 +57,9 @@ public class AntsAttractivenessRunner {
         System.out.println(duration + "(" + duration.getSeconds() + ")");
 
 
-        final String filename = "attractiveness_" +
+        String dirName = "2best-of-tabu";
+        Files.createDirectory(Paths.get(dirName));
+        final String filename = dirName + "/attractiveness_" +
                 numAnts + "_" +
                 maxTime + "_" +
                 dominanceFactor + "_" +
