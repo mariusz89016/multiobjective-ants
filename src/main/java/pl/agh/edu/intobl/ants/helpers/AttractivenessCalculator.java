@@ -3,6 +3,8 @@ package pl.agh.edu.intobl.ants.helpers;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AttractivenessCalculator {
     private final double dominanceFactor;
@@ -54,18 +56,30 @@ public class AttractivenessCalculator {
 
     private double[] dominance(int actualCity, boolean[] visited, int[][] firstCriterium, int[][] secondCriterium) {
         ParetoSet<ParetoElement<Integer>> paretoSet = new ParetoSetImpl();
+        int nonVisitedSize = 0;
         for (int i = 0; i < firstCriterium[actualCity].length; i++) {
             if (!visited[i]) {
                 final IntegerElement element = new IntegerElement(firstCriterium[actualCity][i], secondCriterium[actualCity][i], i);
                 paretoSet.addParetoElementToSet(element);
+                nonVisitedSize++;
             }
         }
         final Set<ParetoElement<Integer>> nonDominatedSet = paretoSet.getNonDominatedSet();
 
-        double probabilityAmount = 1.0 / nonDominatedSet.size();
+        double nonDominatedProbabilityAmount = 1.0 / (nonDominatedSet.size() + 1);
+        double dominatedProbabilityAmount = nonDominatedProbabilityAmount / (nonVisitedSize - nonDominatedSet.size());
+
         double[] probabilities = new double[visited.length];
-        for (ParetoElement<Integer> element : nonDominatedSet) {
-            probabilities[element.cityIndex()] = probabilityAmount;
+        final Set<Integer> nonDominatedCities = nonDominatedSet.stream().map(ParetoElement::cityIndex).collect(Collectors.toSet());
+        for (int i = 0; i < firstCriterium[actualCity].length; i++) {
+            if(!visited[i]) {
+                if(nonDominatedCities.contains(i)) {
+                    probabilities[i] = nonDominatedProbabilityAmount;
+                }
+                else {
+                    probabilities[i] = dominatedProbabilityAmount;
+                }
+            }
         }
 
         return probabilities;
