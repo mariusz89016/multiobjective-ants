@@ -91,12 +91,19 @@ public class AttractivenessCalculator {
             }
         }
 
-        double probabilityAmount = 1.0 / historySet.size();
+        //watch out! - inverse
+        int amount = set.size() - historySet.size();
+        double attractProbabilityAmount = 1.0 / (amount + 1); //for cities not in best-of
+        double repelProbabilityAmount = attractProbabilityAmount / historySet.size(); //for best-of cities
         double[] probabilities = new double[visited.length];
-        for (Integer cityIndex : historySet) {
-            probabilities[cityIndex] = probabilityAmount;
+        for (int i = 0; i < visited.length; i++) {
+            if(!historySet.contains(i)) {
+                probabilities[i] = attractProbabilityAmount;
+            }
+            else {
+                probabilities[i] = repelProbabilityAmount;
+            }
         }
-
         return probabilities;
     }
 
