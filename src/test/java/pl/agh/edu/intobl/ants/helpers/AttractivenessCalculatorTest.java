@@ -25,8 +25,8 @@ public class AttractivenessCalculatorTest {
                                                {3, 0, 0, 0},
                                                {2, 0, 0, 0},
                                                {1, 0, 0, 0}};
-        final AttractivenessCalculator attractivenessCalculator = new AttractivenessCalculator(1.0, 0.0, 0.0, 0.0, 0.0);
-        double[][] array = new double[0][0];
+//        final AttractivenessCalculator attractivenessCalculator = new AttractivenessCalculator(1.0, 0.0, 0.0, 0.0, 0.0);
+//        double[][] array = new double[0][0];
 //        final double[] probabilities = attractivenessCalculator.movesProbability(actualCity, visited, array, firstCriterium, secondCriterium, null, 0.0, 0.0);
 
 //        assertTrue(probabilities[0] == 0.0);

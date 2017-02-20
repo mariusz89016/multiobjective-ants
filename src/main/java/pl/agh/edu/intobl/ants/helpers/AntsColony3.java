@@ -1,5 +1,7 @@
 package pl.agh.edu.intobl.ants.helpers;
 
+import pl.agh.edu.intobl.ants.helpers.configs.ConfigurationReader;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,17 +15,19 @@ public class AntsColony3 {
     private final double rho;
     private final double q0;
     private final double tau0;
+    private final ConfigurationReader configurationReader;
 
-    public AntsColony3(double alpha, double beta, int numAnts, int numCities, double rho, double q0, double tau0, double dominanceFactor, double historyFactor, double pheromoneFactor) {
+    public AntsColony3(double alpha, double beta, int numAnts, int numCities, double rho, double q0, double tau0, ConfigurationReader configurationReader) {
         this.numCities = numCities;
         this.rho = rho;
         this.q0 = q0;
         this.tau0 = tau0;
+        this.configurationReader = configurationReader;
         random = new Random();
         double step = 1.0 / numAnts;
         double current = 0.0;
         for (int i = 0; i < numAnts; i++) {
-            Ants3 ant = new Ants3(dominanceFactor, historyFactor, pheromoneFactor, alpha, beta, current, 1.0 - current);
+            Ants3 ant = new Ants3(alpha, beta, current, 1.0 - current, configurationReader);
             current += step;
             ant.setPath(randomRoute(random.nextInt(numCities), numCities));
             ants.add(ant);
@@ -47,12 +51,12 @@ public class AntsColony3 {
         return pheromones;
     }
 
-    public void updateAnts(double[][] pheromones1, double[][] pheromones2, int[][] distances, int[][] distances2) {
+    public void updateAnts(double[][] pheromones1, double[][] pheromones2, int[][] distances, int[][] distances2, int iter) {
         int numCities = pheromones1.length;
         for (int i = 0; i < ants.size(); i++) {
             final int start = random.nextInt(numCities);
             Ants3 currentAnt = ants.get(i);
-            currentAnt.setPath(currentAnt.buildRoute(start, pheromones1, pheromones2, distances, distances2));
+            currentAnt.setPath(currentAnt.buildRoute(start, pheromones1, pheromones2, distances, distances2, iter));
         }
     }
 

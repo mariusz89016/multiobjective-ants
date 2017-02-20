@@ -1,43 +1,53 @@
 package pl.agh.edu.intobl.ants.helpers;
 
+import pl.agh.edu.intobl.ants.helpers.configs.ConfigurationReader;
+import pl.agh.edu.intobl.ants.helpers.configs.Factors;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class AttractivenessCalculator {
-    private final double dominanceFactor;
-    private final double historyFactor;
-    private final double pheromoneFactor;
-    private final double firstCriteriumWeight;
-    private final double secondCriteriumWeight;
+    private double firstCriteriumWeight;
+    private double secondCriteriumWeight;
+    private final ConfigurationReader configurationReader;
 
-    public AttractivenessCalculator(double dominanceFactor, double historyFactor, double pheromoneFactor, double firstCriteriumWeight, double secondCriteriumWeight) {
-        this.dominanceFactor = dominanceFactor;
-        this.historyFactor = historyFactor;
-        this.pheromoneFactor = pheromoneFactor;
+    public AttractivenessCalculator(ConfigurationReader configurationReader, double firstCriteriumWeight, double secondCriteriumWeight) {
+        this.configurationReader = configurationReader;
         this.firstCriteriumWeight = firstCriteriumWeight;
         this.secondCriteriumWeight = secondCriteriumWeight;
     }
 
-    public double[] movesProbability(int actualCity, boolean[] visited, double[][] pheromones1, double[][] pheromones2, int[][] firstCriterium, int[][] secondCriterium, List<Path> historicalPaths, double alpha, double beta) {
+    public double[] movesProbability(int actualCity, boolean[] visited, double[][] pheromones1, double[][] pheromones2, int[][] firstCriterium, int[][] secondCriterium, List<Path> historicalPaths, double alpha, double beta, int iter) {
         double[] probability = new double[visited.length];
         double[] dominance = new double[visited.length];
-        if(dominanceFactor != 0.0) {
+
+        final Factors factors = configurationReader.getConfiguration(iter);
+
+        if(factors.getDominance() != 0.0) {
             dominance = dominance(actualCity, visited, firstCriterium, secondCriterium);
         }
-        double[] history = new double[visited.length];
-        if(historyFactor != 0.0) {
-            history = history(actualCity, visited, historicalPaths);
+        double[] taboo = new double[visited.length];
+        if(factors.getTaboo() != 0.0) {
+            taboo = taboo(actualCity, visited, historicalPaths);
         }
+
+        double[] bestOf = new double[visited.length];
+        if(factors.getBestOf() != 0.0) {
+            bestOf = bestOf(actualCity, visited, historicalPaths);
+        }
+
         double[] pheromones = new double[visited.length];
-        if(pheromoneFactor != 0.0) {
+        if(factors.getPheromone() != 0.0) {
             pheromones = pheromones(actualCity, visited, pheromones1, pheromones2, alpha, beta, firstCriterium, secondCriterium);
         }
 
         for (int i = 0; i < probability.length; i++) {
-            probability[i] = dominanceFactor * dominance[i] + historyFactor * history[i] + pheromoneFactor * pheromones[i];
+            probability[i] = factors.getDominance() * dominance[i] +
+                                factors.getTaboo() * taboo[i] +
+                                factors.getPheromone() * pheromones[i] +
+                                factors.getBestOf() * bestOf[i];
         }
 
         return normalize(probability);
@@ -85,7 +95,7 @@ public class AttractivenessCalculator {
         return probabilities;
     }
 
-    private double[] history(int actualCity, boolean[] visited, List<Path> historicalPaths) {
+    private double[] taboo(int actualCity, boolean[] visited, List<Path> historicalPaths) {
         Set<Integer> set = new HashSet<>();
         for (int i = 0; i < visited.length; i++) {
             if (!visited[i]) {
@@ -118,6 +128,35 @@ public class AttractivenessCalculator {
                 probabilities[i] = repelProbabilityAmount;
             }
         }
+        return probabilities;
+    }
+
+    private double[] bestOf(int actualCity, boolean[] visited, List<Path> historicalPaths) {
+        Set<Integer> set = new HashSet<>();
+        for (int i = 0; i < visited.length; i++) {
+            if (!visited[i]) {
+                set.add(i);
+            }
+        }
+
+        Set<Integer> historySet = new HashSet<>();
+        for (Path path : historicalPaths) {
+            int[] cityPath = path.getCityPath();
+            for (int i = 0; i < cityPath.length - 1; i++) {
+                if (set.contains(cityPath[i]) && cityPath[i + 1] == actualCity) {
+                    historySet.add(cityPath[i]);
+                } else if (set.contains(cityPath[i + 1]) && cityPath[i] == actualCity) {
+                    historySet.add(cityPath[i + 1]);
+                }
+            }
+        }
+
+        double probabilityAmount = 1.0 / historySet.size();
+        double[] probabilities = new double[visited.length];
+        for (Integer cityIndex : historySet) {
+            probabilities[cityIndex] = probabilityAmount;
+        }
+
         return probabilities;
     }
 
