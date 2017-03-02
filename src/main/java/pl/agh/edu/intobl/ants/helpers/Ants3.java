@@ -66,8 +66,6 @@ public class Ants3 {
     }
 
     private double[] moveProbabilities(int cityX, boolean[] visited, double[][] pheromones1, double[][] pheromones2, int[][] distances, int[][] distances2, int iter) {
-//        return new AttractivenessCalculator(dominanceFactor, historyFactor, pheromoneFactor, weight1, weight2)
-//                .movesProbability(cityX, visited, pheromones, distances, distances2, historicalPaths, alpha, beta);
         return new AttractivenessCalculator(configurationReader, weight1, weight2)
                 .movesProbability(cityX, visited, pheromones1, pheromones2, distances, distances2, new ArrayList<>(frontPareto.getNonDominatedSet()), alpha, beta, iter);
     }

@@ -79,10 +79,3 @@ public class AntsAttractivenessRunner {
         fileWriter.close();
     }
 }
-//ustalic ilosc mrowek
-//20 wywolan (po 10):
-
-//dominanceFactor:
-//historyFactor:
-//pheromoneFactor:
-
